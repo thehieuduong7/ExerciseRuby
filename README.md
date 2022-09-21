@@ -1,4 +1,5 @@
 # ExerciseRuby
 # Run
-  cmd: ruby <ten file>
+  cmd: ruby ten_file.rb
+ 
  
