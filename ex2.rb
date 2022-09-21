@@ -14,7 +14,7 @@ module Generate
     name.downcase + "@gmail.com"
   end
   def self.generatePhone()
-    numbers = "0"
+    numbers = "'0"
     for i in 0..8
       numbers = numbers + rand(10).to_s
     end
@@ -36,7 +36,7 @@ module Generate
   def self.generateArr()
 
     name =generateName()
-    email = generateEmail(name)
+    email = generateEmail(name.to_s)
     phone = generatePhone()
     address =generateAddress(CITIES)
     dob = generateTime().strftime("%Y/%m/%d")
@@ -59,3 +59,4 @@ end
 ending = Time.now
 elapsed = ending - starting
 puts elapsed # => 10.822178
+
