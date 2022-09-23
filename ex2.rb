@@ -63,24 +63,30 @@ end
 
 # Connection Postgres
 class PostgreSQLDB
-  @@CONFIG = {
-    'port'  => '5433',
-    'host' =>  'localhost',
-    'user' => 'postgres',
-    'password' => '123456',
-    'dbname' => 'ruby_intern'
-  }.freeze
+  # @@CONFIG = {
+  #   'port'  => '5433',
+  #   'host' =>  'localhost',
+  #   'user' => 'postgres',
+  #   'password' => '123456',
+  #   'dbname' => 'ruby_intern'
+  # }.freeze
 
+  # Clound
+  @@CONFIG = {
+    'host' =>  'tiny.db.elephantsql.com',
+    'user' => 'firawucy',
+    'password' => 'mQcnqxtGGDWVnTGxo_GQf7bLtNLsNX2h',
+    'dbname' => 'firawucy'
+  }.freeze
   attr_reader :CONFIG
 
   def initialize
     @@connection ||= PG::Connection.open(@@CONFIG) or abort 'Unable to create a new connection!'
-    @@connection.prepare('insert', 'insert into users values ($1, $2, $3, $4, $5, $6)')
   end
 
   def migration_table
-    @@connection.exec('DROP table users')
-    @@connection.exec( 'CREATE TABLE IF NOT EXISTS users (
+    @@connection.exec('DROP TABLE IF EXISTS users')
+    @@connection.exec('CREATE TABLE IF NOT EXISTS users (
       name VARCHAR(50) ,
       Email VARCHAR(50),
       Phone VARCHAR(50) ,
@@ -88,6 +94,7 @@ class PostgreSQLDB
       Day_of_Birth TIMESTAMP ,
       Profile VARCHAR(500)
       );')
+    @@connection.prepare('insert', 'insert into users values ($1, $2, $3, $4, $5, $6)')
   end
 
   def insert_user(user = {})
@@ -103,17 +110,49 @@ class PostgreSQLDB
   # 'file/new_films.csv'
   def import_csv(file_name, headers: true)
     count = 0
-    CSV.foreach(file_name,headers: headers) do |row|
+    CSV.foreach(file_name, headers: headers) do |row|
       user = row.to_hash
       insert_user(user)
       count += 1
     end
   end
+
+  def copy_from_csv(file_name)
+    @@connection.transaction do
+      @@connection.exec( "COPY users FROM STDIN WITH csv" )
+      begin
+        CSV.foreach(file_name, headers: true) do |row|
+          user = row.to_s
+          until @@connection.put_copy_data(user) do
+            $stderr.puts "	waiting for connection to be writable..."
+          end
+        end
+      rescue Errno => err
+        errmsg = "%s while reading copy data: %s" % [ err.class.name, err.message ]
+        @@connection.put_copy_end( errmsg )
+
+      else
+        @@connection.put_copy_end
+        while res = @@connection.get_result
+          $stderr.puts "Result of COPY is: %s" % [ res.res_status(res.result_status) ]
+        end
+      end
+    end
+  end
 end
 
 starting = Time.now
-PostgreSQLDB.new.import_csv('file/new_films.csv')
-# puts PostgreSQLDB.new.migration_table()
+pgdb = PostgreSQLDB.new
+pgdb.migration_table
+pgdb.copy_from_csv('file/new_films.csv')
+
+
+# CSV.foreach("file/new_films.csv", headers: true) do |row|
+#   user = row.to_s
+#   p user
+#   break
+# end
+
 # p Generate.generate_file('file/new_films.csv')
 ending = Time.now
 elapsed = ending - starting
