@@ -65,22 +65,22 @@ end
 # Connection Postgres
 class PostgreSQLDB
   # Localhost
-  # @@CONFIG = {
-  #   'port'  => '5433',
-  #   'host' =>  'localhost',
-  #   'user' => 'postgres',
-  #   'password' => '123456',
-  #   'dbname' => 'ruby_intern'
-  # }.freeze
+  @@CONFIG = {
+    'port'  => '5433',
+    'host' =>  'localhost',
+    'user' => 'postgres',
+    'password' => '123456',
+    'dbname' => 'ruby_intern'
+  }.freeze
 
   # Clound
-  @@CONFIG = {
-    'host' =>  'tiny.db.elephantsql.com',
-    'user' => 'firawucy',
-    'password' => 'mQcnqxtGGDWVnTGxo_GQf7bLtNLsNX2h',
-    'dbname' => 'firawucy'
-  }.freeze
-  attr_reader :CONFIG
+  # @@CONFIG = {
+  #   'host' =>  'tiny.db.elephantsql.com',
+  #   'user' => 'firawucy',
+  #   'password' => 'mQcnqxtGGDWVnTGxo_GQf7bLtNLsNX2h',
+  #   'dbname' => 'firawucy'
+  # }.freeze
+  # attr_reader :CONFIG
 
   def initialize
     @@connection ||= PG::Connection.open(@@CONFIG) or abort 'Unable to create a new connection!'
