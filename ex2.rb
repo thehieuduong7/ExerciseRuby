@@ -38,6 +38,7 @@ module Generate
     "Some special charactor #{chars.shuffle.join}"
   end
 
+  # generate array information user
   def self.generate_array
     name = generate_name
     email = generate_email(name.to_s)
@@ -48,7 +49,7 @@ module Generate
     [name, email, phone, address, dob, profile]
   end
 
-  # File/new_films.csv
+  # create file csv File/new_films.csv
   def self.generate_file(file_name)
     CSV.open(file_name, 'w') do |csv|
       csv << Generate::HEADER
@@ -63,6 +64,7 @@ end
 
 # Connection Postgres
 class PostgreSQLDB
+  # Localhost
   # @@CONFIG = {
   #   'port'  => '5433',
   #   'host' =>  'localhost',
@@ -139,12 +141,16 @@ class PostgreSQLDB
       end
     end
   end
+  def copy_all_csv(file_name)
+    sql = "copy users(name, Email, Phone, Address, Day_of_Birth, Profile) FROM \'#{file_name}\' DELIMITER ',' HEADER CSV;"
+    @@connection.exec(sql)
+  end
 end
 
 starting = Time.now
 pgdb = PostgreSQLDB.new
 pgdb.migration_table
-pgdb.copy_from_csv('file/new_films.csv')
+pgdb.copy_all_csv('D:\BackUp\Work\bestarion\ruby\exercise\file\new_films.csv')
 
 
 # CSV.foreach("file/new_films.csv", headers: true) do |row|
@@ -156,4 +162,4 @@ pgdb.copy_from_csv('file/new_films.csv')
 # p Generate.generate_file('file/new_films.csv')
 ending = Time.now
 elapsed = ending - starting
-puts elapsed # => 10.822178
+puts elapsed # =>2.2662333
