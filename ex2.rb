@@ -1,5 +1,5 @@
 require 'pg'
-require("./generate")
+require("./ulti")
 
 # Connection Postgres
 class PostgreSQLDB
@@ -96,9 +96,9 @@ class PostgreSQLDB
 end
 
 # Generate.generate_file("file/new_films.csv")
-starting = Time.now
 pgdb = PostgreSQLDB.new
 pgdb.migration_table
+starting = Time.now
 pgdb.copy_all_csv('D:\BackUp\Work\bestarion\ruby\exercise\file\new_films.csv')
 ending = Time.now
 elapsed = ending - starting

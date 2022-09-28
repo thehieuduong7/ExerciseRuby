@@ -9,7 +9,7 @@
 #  + mảng con tăng 5: 1
 
 # if sub not increment, next sub array
-require("./generate")
+require("./ulti")
 
 def sub_arr(arr, &handle)
   temp = []
@@ -25,15 +25,9 @@ def sub_arr(arr, &handle)
   handle.call(temp)
 end
 
-begin
-  print 'input n: '
-  n = Integer(gets)
-rescue ArgumentError
-  puts 'input number error'
-  retry
-end
-
+n = IOConsole.input_int("Input n:")
 arr = Generate.generate_ramdom_array(n)
+puts "Random array #{arr}"
 count = 0
 sub_arr(arr) do |input|
   count += 1

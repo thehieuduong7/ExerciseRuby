@@ -11,37 +11,27 @@
 # solve
 # save list value in hash
 
-require("./generate")
+require("./ulti")
 
-begin
-  print 'input n: '
-  n = Integer(gets)
-rescue ArgumentError
-  puts 'input number error'
-  retry
-end
-
+# n = IOConsole.input_int("input size: ")
+n = 20
 array_input = Generate.generate_ramdom_array(n)
 target = rand(10..20)
-puts "Target #{target}"
+puts "Array random: #{array_input}\nTarget #{target}"
 
-module Ex4
-  def self.find_elements(array, target)
-    values = {}
-    array.each do |i|
-      need = target - i
-      if values[need]
-        return [need, i]
-      else
-        values[i] = true
-      end
+def find_elements(array, target)
+  values = {}
+  array.each do |i|
+    need = target - i
+    if values[need]
+      return [need, i]
+    else
+      values[i] = true
     end
-    []
   end
+  []
 end
-
-
-puts Ex4.find_elements(array_input,target).to_s
+puts "Result : #{find_elements(array_input, target)} "
 
 
 # input n: 20

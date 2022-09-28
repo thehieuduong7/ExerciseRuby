@@ -7,13 +7,13 @@
 
 # solve
 # first element parent compare first element sub
-require("./generate")
+require("./ulti")
 
 array_parent = Generate.generate_ramdom_array(100)
 array_sub = Generate.generate_ramdom_array(10)
 
 index_sub = 0
-result = {}
+result = {}   # index: value in array parent
 array_parent.each_with_index do |value,index|
   if index_sub < array_sub.length && array_sub[index_sub] == value
     index_sub += 1

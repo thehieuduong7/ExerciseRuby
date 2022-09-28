@@ -64,9 +64,20 @@ module Generate
   def self.generate_ramdom_array(size)
     arr = []
     size.times {arr.push(rand(9))}
-    puts "random array: #{arr}"
     arr
   end
 end
-
 # p Generate.generate_ramdom_array(4)
+
+# IO
+module IOConsole
+  def self.input_int (msg = 'input number: ')
+    begin
+      print msg
+      return Integer(gets)
+    rescue ArgumentError
+      puts 'input number error'
+      retry
+    end
+  end
+end
