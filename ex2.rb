@@ -1,66 +1,5 @@
-require 'csv'
-require 'date'
-require 'time'
 require 'pg'
-
-#  Module seed data
-module Generate
-  HEADER = ['name', 'Email', 'Phone', 'Address', 'Day_of_Birth', 'Profile'].freeze
-  CITIES = ['HCM', 'HN', 'Da Nang', 'Quang Tri'].freeze
-  def self.generate_name
-    "Nguyen Van A #{rand(100)}"
-  end
-
-  def self.generate_email(name)
-    name.gsub! ' ', ''
-    "#{name.downcase}@gmail.com"
-  end
-
-  def self.generate_phone
-    numbers = '0'
-    0..8.each { numbers += rand(10).to_s }
-    numbers
-  end
-
-  def self.generate_time
-    from = Time.new(1988, 1, 1)
-    to = Time.now
-    Time.at(from + rand * (to.to_f - from.to_f))
-  end
-
-  def self.generate_address(arr)
-    len = arr.length
-    arr[rand(len)]
-  end
-
-  def self.generate_special_character
-    chars = ('!'..'?').to_a
-    "Some special charactor #{chars.shuffle.join}"
-  end
-
-  # generate array information user
-  def self.generate_array
-    name = generate_name
-    email = generate_email(name.to_s)
-    phone = generate_phone
-    address = generate_address(CITIES)
-    dob = generate_time.strftime('%Y/%m/%d')
-    profile = generate_special_character
-    [name, email, phone, address, dob, profile]
-  end
-
-  # create file csv File/new_films.csv
-  def self.generate_file(file_name)
-    CSV.open(file_name, 'w') do |csv|
-      csv << Generate::HEADER
-      count = 0
-      while count < 500000 do
-        count += 1
-        csv << Generate.generate_array
-      end
-    end
-  end
-end
+require("./generate")
 
 # Connection Postgres
 class PostgreSQLDB
@@ -83,7 +22,11 @@ class PostgreSQLDB
   # attr_reader :CONFIG
 
   def initialize
-    @@connection ||= PG::Connection.open(@@CONFIG) or abort 'Unable to create a new connection!'
+    begin
+    @@connection ||= PG::Connection.open(@@CONFIG)
+    rescue PG::ConnectionBad => e
+      abort e.to_s
+    end
   end
 
   def migration_table
@@ -143,23 +86,20 @@ class PostgreSQLDB
   end
   def copy_all_csv(file_name)
     sql = "copy users(name, Email, Phone, Address, Day_of_Birth, Profile) FROM \'#{file_name}\' DELIMITER ',' HEADER CSV;"
-    @@connection.exec(sql)
+    begin
+      @@connection.exec(sql)
+      puts "copy from file '#{file_name}' success!!"
+    rescue PG::UndefinedFile => e
+      puts e
+    end
   end
 end
 
+# Generate.generate_file("file/new_films.csv")
 starting = Time.now
 pgdb = PostgreSQLDB.new
 pgdb.migration_table
 pgdb.copy_all_csv('D:\BackUp\Work\bestarion\ruby\exercise\file\new_films.csv')
-
-
-# CSV.foreach("file/new_films.csv", headers: true) do |row|
-#   user = row.to_s
-#   p user
-#   break
-# end
-
-# p Generate.generate_file('file/new_films.csv')
 ending = Time.now
 elapsed = ending - starting
 puts elapsed # =>2.2662333

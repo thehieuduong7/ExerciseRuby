@@ -7,41 +7,44 @@
 #  + mảng con tăng 3: 3, 6
 #  + mảng con tăng 4: 1, 2, 7
 #  + mảng con tăng 5: 1
-def generate_ramdom_arr(size)
-  arr = []
-  i = 0
-  loop do
-    arr.push(rand(9))
-    i += 1
-    return arr if i == size
-  end
-end
 
-def sub_arr( arr )
-  count = 0
-  print_sub_arr = lambda do |input|
-    count += 1
-    puts "sub arr #{count}: #{input}"
-  end
+# if sub not increment, next sub array
+require("./generate")
+
+def sub_arr(arr, &handle)
   temp = []
   arr.each do |i|
     if temp.length.zero? || temp[-1] < i
       temp.push(i)
     else
-      print_sub_arr.call(arr)
+      handle.call(temp)
       temp = [i]
     end
   end
   # Last sub array
-  print_sub_arr.call(arr)
+  handle.call(temp)
 end
 
 begin
   print 'input n: '
   n = Integer(gets)
-  arr = generate_ramdom_arr(n)
-  puts "random array: #{arr}"
-  sub_arr(arr)
 rescue ArgumentError
   puts 'input number error'
+  retry
 end
+
+arr = Generate.generate_ramdom_array(n)
+count = 0
+sub_arr(arr) do |input|
+  count += 1
+  puts "sub arr #{count}: #{input}"
+end
+
+
+# input n: 10
+# random array: [4, 2, 4, 8, 3, 5, 6, 7, 6, 4]
+# sub arr 1: [4]
+# sub arr 2: [2, 4, 8]
+# sub arr 3: [3, 5, 6, 7]
+# sub arr 4: [6]
+# sub arr 5: [4]

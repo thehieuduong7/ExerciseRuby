@@ -20,3 +20,9 @@ loop do
 		break
 	end
 end
+
+
+# input: 10
+# input: 20
+# input: -1
+# Array(size=2): [10, 20]         Min: 10
