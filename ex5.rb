@@ -7,14 +7,14 @@
 
 # solve
 # first element parent compare first element sub
-require("./ulti")
+require('./ulti')
 
 array_parent = Generate.generate_ramdom_array(100)
 array_sub = Generate.generate_ramdom_array(10)
 
 index_sub = 0
-result = {}   # index: value in array parent
-array_parent.each_with_index do |value,index|
+result = {} # index: value in array parent
+array_parent.each_with_index do |value, index|
   if index_sub < array_sub.length && array_sub[index_sub] == value
     index_sub += 1
     result[index] = value
@@ -22,7 +22,6 @@ array_parent.each_with_index do |value,index|
 end
 puts index_sub == array_sub.length
 puts result
-
 
 # random array: [6, 1, 6, 3, 2, 7, 7, 0, 3, 0, 3, 7, 6, 4, 4, 7, 3, 6, 2, 2, 0, 3, 4, 4, 1, 8, 5, 1, 6, 5, 2, 4, 4, 1, 3, 2, 3, 5, 4, 0, 6, 6, 2, 7, 1, 0, 3, 7, 0, 2, 3, 7, 3, 0, 6, 0, 0, 3, 5, 6, 3, 4, 0, 3, 8, 4, 7, 3, 7, 5, 1, 7, 2, 0, 4, 0, 7, 4, 4, 0, 1, 4, 2, 2, 6, 1, 2, 2, 4, 3, 3, 7, 5, 7, 2, 4, 7, 4, 1, 7]
 # random array: [3, 7, 2, 7, 5, 4, 1, 7, 6, 4]

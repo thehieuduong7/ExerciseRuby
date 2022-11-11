@@ -63,7 +63,16 @@ module Generate
   # generate array numbers
   def self.generate_ramdom_array(size)
     arr = []
-    size.times {arr.push(rand(9))}
+    size.times {arr.push(rand(-size..size))}
+    arr
+  end
+
+  def self.generate_array_uniq(size)
+    arr = []
+    while arr.length < size
+      i = rand(-size..size)
+      arr.push i unless arr.include? i
+    end
     arr
   end
 end
